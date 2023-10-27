@@ -1,21 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Script to demonstrate process signaling and PID file management.
 
-# Define a function to cleanup and exit
-cleanup_and_exit() {
-    rm -f /var/run/myscript.pid
-    exit 0
-}
+echo "$$" > /var/run/myscript.pid
 
-# Trap SIGTERM and SIGINT signals
-trap 'echo "I hate the kill command"; cleanup_and_exit' SIGTERM
-trap 'echo "Y U no love me?!"; exit 1' SIGINT
-trap 'cleanup_and_exit' SIGQUIT
+trap 'echo "I hate the kill command";' SIGTERM
+trap 'echo "Y U no love me?!"; exit 0;' SIGINT
+trap 'rm /var/run/myscript.pid; exit 0;' SIGQUIT
 
-# Write the PID to /var/run/myscript.pid
-echo $$ > /var/run/myscript.pid
-
-# Display "To infinity and beyond" indefinitely
 while true; do
     echo "To infinity and beyond"
-    sleep 2
+    sleep 1
 done
