@@ -1,41 +1,41 @@
 #!/usr/bin/env bash
-# A script to handle the manage_my_process.
 
 PID_FILE="/var/run/my_process.pid"
+COMMAND_PATH="./manage_my_process"
 
-start_process() {
-    if [ -f "$PID_FILE" ]; then
-        echo "manage_my_process is already running."
-    else
-        ./manage_my_process & echo $! > "$PID_FILE"
-        echo "manage_my_process started."
-    fi
-}
-
-stop_process() {
-    if [ -f "$PID_FILE" ]; then
-        kill "$(cat "$PID_FILE")"
-        rm "$PID_FILE"
-        echo "manage_my_process stopped."
-    else
-        echo "manage_my_process is not running."
-    fi
+function is_process_running() {
+    [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null
 }
 
 case "$1" in
     start)
-        start_process
+        if is_process_running; then
+            echo "manage_my_process is already running."
+            exit 1
+        else
+            $COMMAND_PATH & echo $! > "$PID_FILE"
+            echo "manage_my_process started."
+        fi
         ;;
     stop)
-        stop_process
+        if is_process_running; then
+            kill "$(cat "$PID_FILE")" && rm "$PID_FILE"
+            echo "manage_my_process stopped."
+        else
+            echo "manage_my_process is not running."
+            exit 1
+        fi
         ;;
     restart)
-        stop_process
-        sleep 1
-        start_process
+        if is_process_running; then
+            kill "$(cat "$PID_FILE")"
+            rm "$PID_FILE"
+        fi
+        $COMMAND_PATH & echo $! > "$PID_FILE"
         echo "manage_my_process restarted."
         ;;
     *)
         echo "Usage: $0 {start|stop|restart}"
+        exit 1
         ;;
 esac
