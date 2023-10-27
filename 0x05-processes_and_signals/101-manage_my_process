@@ -6,13 +6,11 @@ COMMAND_PATH="./manage_my_process"
 
 function start_process() {
     $COMMAND_PATH & echo $! > "$PID_FILE"
-    echo "manage_my_process started"
 }
 
 function stop_process() {
     if [ -f "$PID_FILE" ]; then
         kill "$(cat "$PID_FILE")" && rm -f "$PID_FILE"
-        echo "manage_my_process stopped"
     else
         echo "manage_my_process not running"
     fi
@@ -21,9 +19,11 @@ function stop_process() {
 case "$1" in
     start)
         start_process
+        echo "manage_my_process started"
         ;;
     stop)
         stop_process
+        echo "manage_my_process stopped"
         ;;
     restart)
         stop_process
