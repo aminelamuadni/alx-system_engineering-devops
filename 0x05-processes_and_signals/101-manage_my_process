@@ -11,7 +11,7 @@ launch_process() {
 
 terminate_process() {
     if [ -f "$PID_FILE" ]; then
-        kill $(cat "$PID_FILE") && rm -f "$PID_FILE"
+        kill "$(cat "$PID_FILE")" && rm -f "$PID_FILE"
         echo "manage_my_process has been stopped."
     else
         echo "manage_my_process is not running."
