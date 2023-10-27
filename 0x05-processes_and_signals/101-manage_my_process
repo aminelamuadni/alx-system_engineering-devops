@@ -3,39 +3,33 @@
 PID_FILE="/var/run/my_process.pid"
 COMMAND_PATH="./manage_my_process"
 
-function is_process_running() {
-    [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null
+function start_process() {
+    $COMMAND_PATH & echo $! > "$PID_FILE"
+    echo "manage_my_process started"
+}
+
+function stop_process() {
+    if [ -f "$PID_FILE" ]; then
+        kill $(cat "$PID_FILE") && rm -f "$PID_FILE"
+        echo "manage_my_process stopped"
+    else
+        echo "manage_my_process not running"
+    fi
 }
 
 case "$1" in
     start)
-        if is_process_running; then
-            echo "manage_my_process is already running."
-            exit 1
-        else
-            $COMMAND_PATH & echo $! > "$PID_FILE"
-            echo "manage_my_process started."
-        fi
+        start_process
         ;;
     stop)
-        if is_process_running; then
-            kill "$(cat "$PID_FILE")" && rm "$PID_FILE"
-            echo "manage_my_process stopped."
-        else
-            echo "manage_my_process is not running."
-            exit 1
-        fi
+        stop_process
         ;;
     restart)
-        if is_process_running; then
-            kill "$(cat "$PID_FILE")"
-            rm "$PID_FILE"
-        fi
-        $COMMAND_PATH & echo $! > "$PID_FILE"
-        echo "manage_my_process restarted."
+        stop_process
+        start_process
+        echo "manage_my_process restarted"
         ;;
     *)
         echo "Usage: $0 {start|stop|restart}"
-        exit 1
         ;;
 esac
