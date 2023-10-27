@@ -4,7 +4,7 @@
 PID_FILE="/var/run/myscript.pid"
 
 # Write the current process PID to the file.
-echo "$$" > "$PID_FILE"
+echo "$!" > "$PID_FILE"
 
 # Define the signal handlers.
 trap 'echo "I hate the kill command";' SIGTERM
