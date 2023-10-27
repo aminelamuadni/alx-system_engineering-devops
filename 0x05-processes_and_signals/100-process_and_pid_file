@@ -1,18 +1,25 @@
 #!/usr/bin/env bash
-# This script demonstrates process signaling and PID file management.
+# A script to handle custom signal behaviors and manage a PID file.
 
 PID_FILE="/var/run/myscript.pid"
 
-# Write the current process PID to the file.
-echo "$!" > "$PID_FILE"
+# Create the PID file if it doesn't exist and write the script's PID into it.
+[ -e "$PID_FILE" ] || touch "$PID_FILE"
+echo "$$" > "$PID_FILE"
 
-# Define the signal handlers.
-trap 'echo "I hate the kill command";' SIGTERM
-trap 'echo "Y U no love me?!"; exit 0;' SIGINT
-trap 'rm -f "$PID_FILE"; echo "Deleted PID file and exiting."; exit 0;' SIGQUIT
+# Define a function to handle termination behaviors.
+terminate_process() {
+    echo "I hate the kill command"
+    rm -f "$PID_FILE"
+    exit 0
+}
 
-# Infinite loop displaying the message.
+# Set up traps for specific signals.
+trap 'terminate_process' SIGTERM SIGQUIT
+trap 'echo "Y U no love me?!"' SIGINT
+
+# Main loop.
 while true; do
     echo "To infinity and beyond"
-    sleep 1
+    sleep 2
 done
