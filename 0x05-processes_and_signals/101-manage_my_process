@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# A script to handle the manage_my_process.
 
 PID_FILE="/var/run/my_process.pid"
 COMMAND_PATH="./manage_my_process"
@@ -10,7 +11,7 @@ function start_process() {
 
 function stop_process() {
     if [ -f "$PID_FILE" ]; then
-        kill $(cat "$PID_FILE") && rm -f "$PID_FILE"
+        kill "$(cat "$PID_FILE")" && rm -f "$PID_FILE"
         echo "manage_my_process stopped"
     else
         echo "manage_my_process not running"
