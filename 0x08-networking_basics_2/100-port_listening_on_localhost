@@ -1,0 +1,5 @@
+#!/bin/bash
+# Script to listen on port 98 on localhost
+
+# Set up a simple TCP server listening on port 98
+nc -l localhost 98
