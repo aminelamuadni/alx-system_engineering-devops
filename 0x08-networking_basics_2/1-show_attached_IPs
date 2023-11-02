@@ -1,0 +1,6 @@
+#!/bin/bash
+# This script uses the `ip` command to list all IPs
+# It filters the output to display only IPv4 addresses
+
+# List all IP addresses (both IPv4 and IPv6), then use awk to filter out the IPv4 addresses
+ip -4 addr | awk '/inet/ {print $2}' | cut -d/ -f1
