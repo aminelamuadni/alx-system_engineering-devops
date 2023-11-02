@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# This script creates a new hosts file with modified localhost and facebook.com IPs
+
+# Backup the original hosts file
+cp /etc/hosts ~/hosts.original
+
+# Copy the current hosts file to a temporary new file
+cp /etc/hosts ~/hosts.new
+
+# Change the IP for localhost to 127.0.0.2
+sed -i 's/^127\.0\.0\.1\s\+localhost/127.0.0.2 localhost/' ~/hosts.new
+
+# Remove existing entries for facebook.com
+sed -i '/facebook\.com/d' ~/hosts.new
+
+# Overwrite the old hosts file with the new hosts file
+cp -f ~/hosts.new /etc/hosts
+
+# Clean up
+rm ~/hosts.new
