@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This script uses the `ip` command to list all IPs
 # It filters the output to display only IPv4 addresses
 
