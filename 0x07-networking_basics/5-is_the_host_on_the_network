@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This script checks the availability of a given IP address by pinging it 5 times.
 
 # Check if an IP address is provided
