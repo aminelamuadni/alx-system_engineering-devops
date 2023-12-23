@@ -1,4 +1,3 @@
-#!/usr/bin/pup
 # This manifest ensures that a specific version of Flask is installed
 
 # Package resource type is used to manage software packages
