@@ -1,4 +1,3 @@
-#!/usr/bin/env puppet
 # This manifest kills a process named 'killmenow' using the pkill command
 
 # Exec resource type is used to execute commands
