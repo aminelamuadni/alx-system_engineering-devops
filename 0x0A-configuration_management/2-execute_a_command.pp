@@ -1,7 +1,6 @@
-# This manifest kills a process named 'killmenow' using the pkill command
-
-# Exec resource type is used to execute commands
+# Kills a process named 'killmenow' using the pkill command
 exec { 'killmenow':
-  command     => 'pkill -9 killmenow',
-  path        => '/usr/bin',
+  command     => 'pkill -f killmenow',
+  path        => ['/bin', '/usr/bin', '/usr/local/bin'],
+  refreshonly => true,
 }
