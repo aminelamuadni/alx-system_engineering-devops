@@ -3,5 +3,5 @@
 # Exec resource type is used to execute commands
 exec { 'killmenow':
   command     => 'pkill -f killmenow',
-  path        => '/bin', '/usr/bin',
+  path        => '/usr/bin',
 }
