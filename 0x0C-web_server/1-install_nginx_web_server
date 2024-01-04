@@ -2,8 +2,8 @@
 # This script installs and configures Nginx on an Ubuntu server and allows traffic on port 80
 
 # Update and install Nginx
-apt-get update -y
-apt-get install nginx -y
+sudo apt-get update -y
+sudo apt-get install nginx -y
 
 # Allow traffic on port 80
 ufw allow 'Nginx HTTP'
