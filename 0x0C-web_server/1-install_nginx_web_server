@@ -1,8 +1,18 @@
 #!/usr/bin/env bash
-# This script installs and configures Nginx on an Ubuntu server and allows traffic on port 80
+# Installs Nginx on Ubuntu and configures firewall for port 80 traffic
 
+# Update and install Nginx
 apt-get update -y
 apt-get install nginx -y
+
+# Modify Nginx configuration to ensure it's listening on port 80
+sed -i 's/listen 80 default_server;/listen 80;/' /etc/nginx/sites-available/default
+
+# Allow traffic on port 80
 ufw allow 'Nginx HTTP'
+
+# Create a simple HTML file to serve
 echo "Hello World!" > /var/www/html/index.html
+
+# Start Nginx without using systemctl
 service nginx start
