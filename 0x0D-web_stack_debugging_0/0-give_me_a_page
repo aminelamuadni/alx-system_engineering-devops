@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Script to configure Apache server and restart it
+
+# Command to set 'ServerName' to 'localhost' in Apache's configuration
+echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+# Restart Apache to apply the changes
+service apache2 restart
