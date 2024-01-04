@@ -1,15 +1,12 @@
 #!/usr/bin/env bash
-# This script installs and configures Nginx on an Ubuntu server and allows traffic on port 80
+# This script installs and configures Nginx on an Ubuntu server
 
 # Update and install Nginx
 sudo apt-get update -y
 sudo apt-get install nginx -y
 
-# Allow traffic on port 80
-ufw allow 'Nginx HTTP'
-
 # Create a simple HTML file to serve
-echo "Hello World!" > /var/www/html/index.nginx-debian.html
+echo "Hello World!" | tee /var/www/html/index.html
 
 # Start Nginx without using systemctl
 service nginx start
