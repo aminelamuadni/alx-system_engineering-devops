@@ -16,10 +16,12 @@ file { '/var/www/html/index.nginx-debian.html':
   content => 'Hello World!',
 }
 
-# Configure redirection and custom 404 error page
-file_line { 'nginx_301_redirect':
-  ensure => 'present',
-  path   => '/etc/nginx/sites-available/default',
-  line   => '    location /redirect_me { return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4; }',
-  after  => '^server_name _;',
+# Configure redirection
+exec { 'insert_nginx_301_redirect':
+  command => "sed -i '/server_name _;/a \    location /redirect_me { return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4; }' /etc/nginx/sites-available/default",
+  path    => ['/usr/bin', '/usr/sbin'],
+  onlyif  => "grep -q 'server_name _;' /etc/nginx/sites-available/default",
+  unless  => "grep -q 'location /redirect_me' /etc/nginx/sites-available/default",
+  require => Package['nginx'],
+  notify  => Service['nginx'],
 }
