@@ -3,11 +3,10 @@
 
 # Update and install Nginx
 sudo apt-get update -y
-sudo apt-get upgrade -y
 sudo apt-get install nginx -y
 
 # Create a simple HTML file to serve
-echo "Hello World!" > /var/www/html/index.nginx-debian.html
+echo "Hello World!" > /var/www/html/index.html
 
 # Start Nginx without using systemctl
 sudo service nginx start
