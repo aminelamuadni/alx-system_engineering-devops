@@ -1,3 +1,5 @@
+# Puppet script to install Nginx, serve a custom HTML page, and configure a 301 redirect
+
 # Ensure Nginx is installed
 package { 'nginx':
     ensure => installed,
