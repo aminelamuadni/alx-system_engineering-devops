@@ -2,28 +2,24 @@
 
 # Ensure Nginx is installed
 package { 'nginx':
-    ensure => installed,
+  ensure => installed,
 }
 
 # Ensure Nginx service is running and enabled
 service { 'nginx':
-    ensure  => running,
-    enable  => true,
-    require => Package['nginx'],
+  ensure  => running,
+  require => Package['nginx'],
 }
 
 # Create a simple Hello World HTML file
 file { '/var/www/html/index.nginx-debian.html':
-    ensure  => file,
-    content => 'Hello World!',
-    require => Package['nginx'],
-    notify  => Service['nginx'],
+  content => 'Hello World!',
 }
 
 # Configure redirection and custom 404 error page
-exec { 'nginx_301_redirect':
-    command => "sed -i '/server_name _;/a location /redirect_me { return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4; }' /etc/nginx/sites-available/default",
-    require => Package['nginx'],
-    notify  => Service['nginx'],
-    unless  => "grep -q 'return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4' /etc/nginx/sites-available/default",
+file_line { 'nginx_301_redirect':
+  ensure => 'present',
+  path   => '/etc/nginx/sites-available/default',
+  line   => '    location /redirect_me { return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4; }',
+  after  => '^server_name _;',
 }
