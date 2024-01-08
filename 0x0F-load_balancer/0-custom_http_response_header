@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Bash script to install Nginx, serve a custom HTML page, configure a 301 redirect, and add a custom Nginx response header
+
+# Ensure Nginx is installed
+sudo apt-get update -y
+sudo apt-get install nginx -y
+
+# Create a simple "Hello World" HTML file
+echo 'Hello World!' | sudo tee /var/www/html/index.nginx-debian.html > /dev/null
+
+# Configure a 301 redirect
+sudo sed -i '/server_name _;/a \    location /redirect_me { return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4; }' /etc/nginx/sites-available/default
+
+# Add custom Nginx response header
+sudo sed -i "/server_name _;/a \    add_header X-Served-By \$HOSTNAME;" /etc/nginx/sites-available/default
+
+# Restart Nginx to apply changes (without using systemctl)
+sudo service nginx restart
