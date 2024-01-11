@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Script to fix Nginx not listening on port 80 by killing processes on port 80, reinstalling, and starting Nginx
+sudo fuser -k 80/tcp
+sudo apt-get install --reinstall nginx -y
+sudo service nginx start
