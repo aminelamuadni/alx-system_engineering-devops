@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Script to fix Nginx not listening on port 80 by killing processes on port 80, reinstalling, and starting Nginx
-sudo fuser -k 80/tcp
-sudo apt-get install --reinstall nginx -y
-sudo service nginx start
+# Fixes Nginx to listen on port 80 and restarts the service
+sed -i 's/8080/80/g' /etc/nginx/sites-available/default
+sudo ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+sudo service nginx restart
