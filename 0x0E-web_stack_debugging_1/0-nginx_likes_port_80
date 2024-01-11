@@ -1,24 +1,9 @@
 #!/usr/bin/env bash
 # This script configures Nginx to listen on port 80 of all active IPv4 IPs
 
-# Start Nginx service if it's not running
-if ! pgrep -x "nginx" > /dev/null
-then
-    sudo service nginx start
-fi
-
-# Check if Nginx is now running
-if ! pgrep -x "nginx" > /dev/null
-then
-    echo "Failed to start Nginx"
-    exit 1
-fi
-
 # Remove and recreate the symbolic link for Nginx default site
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
-# Reload Nginx to apply changes
-sudo service nginx reload
-
-echo "Nginx configuration updated and service reloaded"
+# Restart Nginx service
+sudo service nginx restart
