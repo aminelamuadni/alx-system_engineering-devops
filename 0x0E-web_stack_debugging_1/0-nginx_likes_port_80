@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# This script configures Nginx to listen on port 80 of all active IPv4 IPs
+
+# Start Nginx service if it's not running
+if ! pgrep -x "nginx" > /dev/null
+then
+    sudo service nginx start
+fi
+
+# Check if Nginx is now running
+if ! pgrep -x "nginx" > /dev/null
+then
+    echo "Failed to start Nginx"
+    exit 1
+fi
+
+# Configure Nginx to listen on port 80
+# Assuming default configuration file path
+CONF_FILE="/etc/nginx/sites-available/default"
+if grep -q "listen 80;" "$CONF_FILE"; then
+    echo "Nginx is already configured to listen on port 80"
+else
+    sudo sed -i '/listen \[::\]:80 default_server;/a \    listen 80;' "$CONF_FILE"
+    sudo service nginx reload
+fi
+
+echo "Nginx configuration updated and service reloaded"
