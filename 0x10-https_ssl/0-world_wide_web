@@ -5,18 +5,16 @@
 fetch_and_display_dns() {
     local subdomain=$1
     local domain=$2
+    local dns_output record_type ip_address
 
     # Performing the DNS lookup
-    local dns_output=$(dig +noall +answer ${subdomain}.${domain} A | awk '{print $4, $5}')
+    dns_output=$(dig +noall +answer "${subdomain}.${domain}" A | awk '{print $4, $5}')
 
+    # Check if DNS output is non-empty and display formatted result
     if [ -n "$dns_output" ]; then
-        # Extract record type and IP
-        local record_type=$(echo $dns_output | cut -d ' ' -f 1)
-        local ip_address=$(echo $dns_output | cut -d ' ' -f 2)
-
+        record_type=$(echo "$dns_output" | cut -d ' ' -f 1)
+        ip_address=$(echo "$dns_output" | cut -d ' ' -f 2)
         echo "The subdomain ${subdomain} is a ${record_type} record and points to ${ip_address}"
-    else
-        echo "No A record found for ${subdomain}.${domain}"
     fi
 }
 
@@ -28,21 +26,16 @@ process_arguments() {
     # Default subdomains
     local default_subdomains=("www" "lb-01" "web-01" "web-02")
 
-    if [ -z "$domain" ]; then
-        echo "*** Provide domain name ***"
-        return 1
-    fi
-
+    # If no subdomain is specified, loop through default subdomains
     if [ -z "$subdomain" ]; then
-        # Loop through and display default subdomains
         for sd in "${default_subdomains[@]}"; do
-            fetch_and_display_dns $sd $domain
+            fetch_and_display_dns "$sd" "$domain"
         done
     else
         # Display information for the specified subdomain
-        fetch_and_display_dns $subdomain $domain
+        fetch_and_display_dns "$subdomain" "$domain"
     fi
 }
 
 # Call the main function with provided arguments
-process_arguments $1 $2
+process_arguments "$1" "$2"
