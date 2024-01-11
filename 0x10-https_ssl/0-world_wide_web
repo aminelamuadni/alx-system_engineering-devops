@@ -1,41 +1,44 @@
 #!/usr/bin/env bash
 # Script to display information about subdomains
 
-# Function to fetch and display DNS information
-fetch_and_display_dns() {
+# Function to get DNS record and output formatted result
+get_dns_record() {
     local subdomain=$1
     local domain=$2
-    local dns_output record_type ip_address
+    local dns_record
 
-    # Performing the DNS lookup
-    dns_output=$(dig +noall +answer "${subdomain}.${domain}" A | awk '{print $4, $5}')
+    # Perform DNS lookup
+    dns_record=$(dig +short "${subdomain}.${domain}" A)
 
-    # Check if DNS output is non-empty and display formatted result
-    if [ -n "$dns_output" ]; then
-        record_type=$(echo "$dns_output" | cut -d ' ' -f 1)
-        ip_address=$(echo "$dns_output" | cut -d ' ' -f 2)
-        echo "The subdomain ${subdomain} is a ${record_type} record and points to ${ip_address}"
+    if [ -n "$dns_record" ]; then
+        echo "The subdomain ${subdomain} is a A record and points to ${dns_record}"
     fi
 }
 
-# Main function to process the arguments
-process_arguments() {
+# Main function to process input
+display_subdomain_info() {
     local domain=$1
     local subdomain=$2
 
     # Default subdomains
-    local default_subdomains=("www" "lb-01" "web-01" "web-02")
+    local subdomains=("www" "lb-01" "web-01" "web-02")
 
-    # If no subdomain is specified, loop through default subdomains
-    if [ -z "$subdomain" ]; then
-        for sd in "${default_subdomains[@]}"; do
-            fetch_and_display_dns "$sd" "$domain"
-        done
+    if [ -n "$subdomain" ]; then
+        # Display information for specific subdomain
+        get_dns_record "$subdomain" "$domain"
     else
-        # Display information for the specified subdomain
-        fetch_and_display_dns "$subdomain" "$domain"
+        # Loop through and display each default subdomain
+        for sd in "${subdomains[@]}"; do
+            get_dns_record "$sd" "$domain"
+        done
     fi
 }
 
+# Check for domain argument
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 domain [subdomain]"
+    exit 1
+fi
+
 # Call the main function with provided arguments
-process_arguments "$1" "$2"
+display_subdomain_info "$1" "$2"
