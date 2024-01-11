@@ -1,36 +1,48 @@
 #!/usr/bin/env bash
 # Script to display information about subdomains
 
-# Function to get and display DNS record for a given subdomain
-fetch_dns_record() {
+# Function to fetch and display DNS information
+fetch_and_display_dns() {
     local subdomain=$1
     local domain=$2
 
-    # Use dig to fetch the DNS record and awk to format the output
-    dig +noall +answer ${subdomain}.${domain} | awk -v subdomain="$subdomain" '/^;; ANSWER SECTION:/,/^$/{ if($4=="A") printf "The subdomain %s is a %s record and points to %s\n", subdomain, $4, $5; }'
-}
+    # Performing the DNS lookup
+    local dns_output=$(dig +noall +answer ${subdomain}.${domain} A | awk '{print $4, $5}')
 
-# Main logic to process domain and subdomain
-process_domain() {
-    local domain=$1
-    local subdomain=$2
+    if [ -n "$dns_output" ]; then
+        # Extract record type and IP
+        local record_type=$(echo $dns_output | cut -d ' ' -f 1)
+        local ip_address=$(echo $dns_output | cut -d ' ' -f 2)
 
-    # If only domain is provided, check for default subdomains
-    if [ -z "$subdomain" ]; then
-        for default_subdomain in "www" "lb-01" "web-01" "web-02"; do
-            fetch_dns_record $default_subdomain $domain
-        done
+        echo "The subdomain ${subdomain} is a ${record_type} record and points to ${ip_address}"
     else
-        # Process the provided subdomain
-        fetch_dns_record $subdomain $domain
+        echo "No A record found for ${subdomain}.${domain}"
     fi
 }
 
-# Check for at least one argument
-if [ $# -lt 1 ]; then
-    echo "Usage: $0 domain [subdomain]"
-    exit 1
-fi
+# Main function to process the arguments
+process_arguments() {
+    local domain=$1
+    local subdomain=$2
 
-# Call main function with provided arguments
-process_domain $1 $2
+    # Default subdomains
+    local default_subdomains=("www" "lb-01" "web-01" "web-02")
+
+    if [ -z "$domain" ]; then
+        echo "*** Provide domain name ***"
+        return 1
+    fi
+
+    if [ -z "$subdomain" ]; then
+        # Loop through and display default subdomains
+        for sd in "${default_subdomains[@]}"; do
+            fetch_and_display_dns $sd $domain
+        done
+    else
+        # Display information for the specified subdomain
+        fetch_and_display_dns $subdomain $domain
+    fi
+}
+
+# Call the main function with provided arguments
+process_arguments $1 $2
