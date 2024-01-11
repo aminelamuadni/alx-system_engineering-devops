@@ -1,39 +1,36 @@
 #!/usr/bin/env bash
 # Script to display information about subdomains
 
-# Function to get DNS record information
-get_dns_info() {
-    local domain=$1
-    local subdomain=$2
-    local result=$(dig +short $subdomain.$domain A)
-    if [[ -n $result ]]; then
-        echo "The subdomain $subdomain is a A record and points to $result"
-    else
-        echo "No A record found for $subdomain"
-    fi
+# Function to get and display DNS record for a given subdomain
+fetch_dns_record() {
+    local subdomain=$1
+    local domain=$2
+
+    # Use dig to fetch the DNS record and awk to format the output
+    dig +noall +answer ${subdomain}.${domain} | awk -v subdomain="$subdomain" '/^;; ANSWER SECTION:/,/^$/{ if($4=="A") printf "The subdomain %s is a %s record and points to %s\n", subdomain, $4, $5; }'
 }
 
-# Main script logic
-main() {
+# Main logic to process domain and subdomain
+process_domain() {
     local domain=$1
     local subdomain=$2
 
-    if [[ -z $domain ]]; then
-        echo "Domain not provided"
-        return 1
-    fi
-
-    if [[ -z $subdomain ]]; then
-        # Display info for default subdomains if subdomain is not provided
-        get_dns_info $domain "www"
-        get_dns_info $domain "lb-01"
-        get_dns_info $domain "web-01"
-        get_dns_info $domain "web-02"
+    # If only domain is provided, check for default subdomains
+    if [ -z "$subdomain" ]; then
+        for default_subdomain in "www" "lb-01" "web-01" "web-02"; do
+            fetch_dns_record $default_subdomain $domain
+        done
     else
-        # Display info for provided subdomain
-        get_dns_info $domain $subdomain
+        # Process the provided subdomain
+        fetch_dns_record $subdomain $domain
     fi
 }
 
-# Calling the main function with arguments
-main "$@"
+# Check for at least one argument
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 domain [subdomain]"
+    exit 1
+fi
+
+# Call main function with provided arguments
+process_domain $1 $2
