@@ -2,16 +2,16 @@
 # Configure Nginx to run as nginx user and listen on port 8080
 
 # Change Nginx user
-sed -i "s/#user www-data/user nginx/" /etc/nginx/nginx.conf
+sudo sed -i "s/#user www-data/user nginx/" /etc/nginx/nginx.conf
 
 # Change listening port with more specificity
-sed -i 's/listen 80;/listen 8080;/g' /etc/nginx/sites-available/default
+sudo sed -i 's/listen 80;/listen 8080;/g' /etc/nginx/sites-available/default
 
 # Set permissions
-chmod 644 /etc/nginx/nginx.conf
+sudo chmod 644 /etc/nginx/nginx.conf
 
 # Stop Apache if it's running
-pkill apache2
+sudo pkill apache2
 
 # Restart Nginx
-sudo -u nginx service nginx restart
+sudo service nginx restart
