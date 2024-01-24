@@ -1,17 +1,24 @@
 #!/usr/bin/env bash
 # Configure Nginx to run as nginx user and listen on port 8080
 
-# Change Nginx user
-sudo sed -i "s/#user www-data/user nginx/" /etc/nginx/nginx.conf
+# Set permissions for the Nginx main configuration file
+# Read and write for the owner, read-only for group and others
+chmod 644 /etc/nginx/nginx.conf
 
-# Change listening port with more specificity
-sudo sed -i 's/listen 80;/listen 8080;/g' /etc/nginx/sites-enabled/default
+# Update the Nginx configuration to run as the 'nginx' user
+# This sed command finds the 'user' directive and replaces it with 'user nginx;'
+# It handles cases where the line might be commented out or have varying amounts of whitespace
+sed -Ei 's/\s*#?\s*user .*/user nginx;/' /etc/nginx/nginx.conf
 
-# Set permissions
-sudo chmod 644 /etc/nginx/nginx.conf
+# Change the Nginx listening port from 80 to 8080 in the default site configuration
+# This sed command specifically targets lines that set the listening port to 80,
+# including handling both IPv4 and IPv6 configurations
+sed -Ei 's/(listen (\[::\]:)?80) /\180 /' /etc/nginx/sites-enabled/default
 
-# Stop Apache if it's running
-sudo pkill apache2
+# Stop any running Apache2 processes
+# This is to prevent conflicts as Apache2 may also be using port 80
+pkill apache2
 
-# Restart Nginx
-sudo service nginx restart
+# Restart the Nginx service to apply the changes
+# It's important to restart the service so that the new configuration takes effect
+service nginx restart
