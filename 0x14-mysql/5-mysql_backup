@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# This script creates a MySQL dump of all databases and compresses it into a tar.gz archive.
+
+# Check if a password is provided as an argument
+if [ $# -eq 0 ]; then
+    echo "Please provide the MySQL root password as an argument."
+    exit 1
+fi
+
+# Variables
+MYSQL_PWD=$1
+DATE=$(date +%d-%m-%Y)
+DUMP_FILE="backup.sql"
+ARCHIVE_FILE="$DATE.tar.gz"
+
+# Perform MySQL dump of all databases
+if ! mysqldump -u root -p"$MYSQL_PWD" --all-databases > "$DUMP_FILE"; then
+    echo "MySQL dump failed."
+    exit 1
+fi
+
+# Compress the dump file
+if ! tar -czf "$ARCHIVE_FILE" "$DUMP_FILE"; then
+    echo "Compression failed."
+    exit 1
+fi
+
+echo "Backup completed successfully: $ARCHIVE_FILE"
+
+# Clean up the dump file
+rm "$DUMP_FILE"
