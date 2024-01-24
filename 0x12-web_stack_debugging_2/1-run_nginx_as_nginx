@@ -21,4 +21,4 @@ pkill apache2
 
 # Restart the Nginx service to apply the changes
 # It's important to restart the service so that the new configuration takes effect
-service nginx restart
+su nginx -s /bin/bash -c 'service nginx restart'
