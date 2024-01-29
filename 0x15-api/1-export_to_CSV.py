@@ -29,8 +29,11 @@ def export_to_csv(user_id):
     with open(f"{user_id}.csv", 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
         for todo in todos:
-            writer.writerow([user_id, user['username'], todo['completed'],
-                todo['title']])
+            writer.writerow([
+                user_id, user['username'],
+                todo['completed'],
+                todo['title']
+            ])
 
 
 def main(employee_id):
