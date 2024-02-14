@@ -4,5 +4,5 @@
 exec { 'correct_wp_settings_typo':
   command => "sudo sed -i 's/phpp/php/g' /var/www/html/wp-settings.php",
   path    => ['/usr/bin', '/usr/sbin'],
-  unless  => "sudo grep -qv 'phpp' /var/www/html/wp-settings.php",
+  unless  => "sudo grep -qv 'phpp' /var/www/html/wp-settings.php"
 }
