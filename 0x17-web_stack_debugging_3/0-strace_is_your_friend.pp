@@ -1,8 +1,8 @@
 # 0-strace_is_your_friend.pp
-# This Puppet manifest corrects a typo in the WordPress configuration file
+# Puppet manifest to correct a typo in WordPress files
 
-exec { 'correct_wp_settings_typo':
-  command => "sed -i 's/phpp/php/g' /var/www/html/wp-settings.php",
-  path    => ['/usr/bin', '/usr/sbin'],
-  unless  => "grep -qv 'phpp' /var/www/html/wp-settings.php",
+exec { 'fix-wp-locale-typo':
+  command => "find /var/www/html -type f -name '*.php' -exec sed -i 's/class-wp-locale.phpp/class-wp-locale.php/g' {} +",
+  path    => ['/bin', '/usr/bin', '/usr/sbin'],
+  onlyif  => "find /var/www/html -type f -name '*.php' -exec grep -l 'class-wp-locale.phpp' {} +",
 }
