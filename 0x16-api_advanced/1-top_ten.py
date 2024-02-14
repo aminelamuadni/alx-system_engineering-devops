@@ -9,6 +9,10 @@ def top_ten(subreddit):
     """
     Prints the titles of the first 10 hot posts listed for a given subreddit.
     """
+    if subreddit is None or type(subreddit) is not str:
+        print(None)
+        return
+
     url = "https://www.reddit.com/r/{}/hot/.json".format(subreddit)
     headers = {
         'User-Agent': ('Python:alx-system_engineering-devops:v1.0 '
