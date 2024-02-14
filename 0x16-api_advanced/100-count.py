@@ -3,8 +3,8 @@
 Module to recursively query the Reddit API and count words in hot article
 titles
 """
-import requests
 import re
+import requests
 
 
 def count_words(subreddit, word_list, after="", word_count={}):
