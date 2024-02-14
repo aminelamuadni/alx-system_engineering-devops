@@ -16,12 +16,15 @@ def number_of_subscribers(subreddit):
                        '(by /u/AmineLamuadni)')
     }
 
-    response = requests.get(url, headers=headers, allow_redirects=False)
-    if response.status_code != 200:
+    try:
+        response = requests.get(url, headers=headers, allow_redirects=False)
+        if response.status_code != 200:
+            return 0
+        if not response.text:
+            return 0
+        return response.json().get("data", {}).get("subscribers", 0)
+    except requests.RequestException:
         return 0
-    if not response.text:
-        return 0
-    return response.json().get("data", {}).get("subscribers", 0)
 
 
 if __name__ == "__main__":
