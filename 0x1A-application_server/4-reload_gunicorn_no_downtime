@@ -1,16 +1,3 @@
 #!/usr/bin/env bash
 # Script to gracefully reload Gunicorn without service interruption
-
-# Get the PID of Gunicorn master process
-GUNICORN_PID=$(pgrep -f 'gunicorn: master \[web_dynamic.2-hbnb:app\]')
-
-# Check if Gunicorn is running
-if [ -z "$GUNICORN_PID" ]; then
-    echo "Gunicorn is not running."
-    exit 1
-fi
-
-# Reload Gunicorn gracefully
-kill -HUP $GUNICORN_PID
-
-echo "Gunicorn reloaded successfully."
+pkill -HUP gunicorn
