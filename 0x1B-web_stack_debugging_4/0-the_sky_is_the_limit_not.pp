@@ -1,24 +1,30 @@
-# This Puppet manifest updates Nginx configuration to handle more concurrent connections
-# by using sed to modify worker_processes and worker_connections.
+# Puppet manifest to increase Nginx worker_processes and worker_connections for improved concurrency handling
 
-# Update worker_processes
-exec { 'increase-worker_processes':
+# Ensure sed is available for executing commands
+package { 'sed':
+  ensure => present,
+}
+
+# Update worker_processes to 'auto' to allow Nginx to auto-scale based on available CPU cores
+exec { 'update-worker_processes':
   command => "sed -i 's/worker_processes  1;/worker_processes  auto;/' /etc/nginx/nginx.conf",
-  path    => ['/bin', '/usr/bin', '/usr/sbin'],
+  path    => ['/bin/', '/usr/bin/'],
   unless  => "grep -q 'worker_processes  auto;' /etc/nginx/nginx.conf",
+  require => Package['sed'],
 }
 
-# Update worker_connections
-exec { 'increase-worker_connections':
+# Update worker_connections to a higher value to support more concurrent connections
+exec { 'update-worker_connections':
   command => "sed -i 's/worker_connections  1024;/worker_connections  2048;/' /etc/nginx/nginx.conf",
-  path    => ['/bin', '/usr/bin', '/usr/sbin'],
+  path    => ['/bin/', '/usr/bin/'],
   unless  => "grep -q 'worker_connections  2048;' /etc/nginx/nginx.conf",
+  require => Package['sed'],
 }
 
-# Reload Nginx to apply changes
+# Reload Nginx to apply configuration changes
 exec { 'reload-nginx':
-  command     => 'nginx -s reload',
-  path        => ['/bin', '/usr/bin', '/usr/sbin'],
+  command     => 'service nginx reload',
+  path        => ['/bin/', '/usr/sbin/', '/usr/bin/'],
   refreshonly => true,
-  subscribe   => [Exec['increase-worker_processes'], Exec['increase-worker_connections']],
+  subscribe   => [Exec['update-worker_processes'], Exec['update-worker_connections']],
 }
