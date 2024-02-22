@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Script to gracefully reload Gunicorn without service interruption
 
 # Get the PID of Gunicorn master process
 GUNICORN_PID=$(pgrep -f 'gunicorn: master \[web_dynamic.2-hbnb:app\]')
