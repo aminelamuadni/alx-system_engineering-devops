@@ -8,5 +8,5 @@ exec { 'restart-nginx':
   command     => '/etc/init.d/nginx restart',
   path        => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
   refreshonly => true,
-  subscribe   => Exec['increase-nofile-limit'],
+  subscribe   => Exec['fix--for-nginx'],
 }
