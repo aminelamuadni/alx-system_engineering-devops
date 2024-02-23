@@ -1,6 +1,11 @@
-# Increase file descriptor limits for the holberton user
-exec { 'change-os-configuration-for-holberton-user':
-  command => "/usr/bin/env sed -i '/^# End of file/i\\holberton soft nofile 4096\\nholberton hard nofile 8192' /etc/security/limits.conf",
-  path    => ['/bin', '/usr/bin', '/usr/sbin'],
-  unless  => "/bin/grep -q 'holberton .* nofile' /etc/security/limits.conf",
+# Puppet manifest to adjust file descriptor limits for the holberton user
+
+exec { 'set-holberton-soft-nofile':
+  command => 'sed -i '/^holberton soft nofile/s/[[:digit:]]\\+/50000/' /etc/security/limits.conf',
+  path    => '/usr/local/bin/:/bin/',
+}
+
+exec { 'set-holberton-hard-nofile':
+  command => 'sed -i '/^holberton hard nofile/s/[[:digit:]]\\+/50000/' /etc/security/limits.conf',
+  path    => '/usr/local/bin/:/bin/',
 }
