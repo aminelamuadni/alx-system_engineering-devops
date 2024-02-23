@@ -1,13 +1,16 @@
-# Puppet manifest to optimize Nginx for handling high concurrent load
+# Puppet manifest to adjust the open file limit for Nginx and restart the service
 
-exec { 'adjust-nginx-worker_processes':
-  command => "sed -i '/worker_processes/c\\worker_processes auto;' /etc/nginx/nginx.conf",
+# Increase the file descriptor limit for Nginx
+exec { 'increase-nginx-file-descriptor-limit':
+  command => "/bin/sed -i 's/#*\\s*worker_rlimit_nofile.*/worker_rlimit_nofile 4096;/' /etc/nginx/nginx.conf",
   path    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
-  unless  => "grep -q 'worker_processes auto' /etc/nginx/nginx.conf",
+  unless  => "grep -q 'worker_rlimit_nofile 4096;' /etc/nginx/nginx.conf",
 }
 
-exec { 'restart-nginx':
-  command => 'nginx -s reload',
+# Restart Nginx to apply changes
+exec { 'restart-nginx-service':
+  command => '/etc/init.d/nginx restart',
   path    => ['/bin', '/usr/bin', '/sbin', '/usr/sbin'],
-  require => Exec['adjust-nginx-worker_processes'],
+  refreshonly => true,
+  subscribe   => Exec['increase-nginx-file-descriptor-limit'],
 }
