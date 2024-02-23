@@ -1,3 +1,24 @@
 #!/usr/bin/env bash
 # Script to gracefully reload Gunicorn without service interruption
-pkill -HUP gunicorn
+
+# Fetch the PID(s) of the running Gunicorn process(es)
+GUNICORN_PID=$(pgrep gunicorn)
+
+# Check if Gunicorn is running by examining if the PID was found
+if [ -z "$GUNICORN_PID" ]; then
+	echo "Gunicorn is not running."
+	exit 1
+fi
+
+# If Gunicorn is running, proceed to send HUP signal to each PID
+echo "Sending HUP signal to Gunicorn processes..."
+for pid in $GUNICORN_PID; do
+	kill -HUP "$pid"
+done
+
+# Wait for a short period to allow old workers to finish processing
+echo "Waiting for old workers to finish processing..."
+sleep 5
+
+# Confirm that Gunicorn has been reloaded
+echo "Gunicorn reloaded successfully."
