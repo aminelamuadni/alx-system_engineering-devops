@@ -1,20 +1,11 @@
-[Unit]
-Description = Gunicorn instance to serve AirBnB clone
-After = network.target
+# Puppet manifest to adjust file descriptor limits for the holberton user
 
-[Service]
-PermissionsStartOnly = true
-PIDFile = /run/hbnb/hbnb.pid
-User = ubuntu
-Group = ubuntu
-WorkingDirectory = /home/ubuntu/AirBnB_clone_v4
-ExecStartPre = /bin/mkdir /run/hbnb
-ExecStartPre = /bin/chown -R ubuntu:ubuntu /run/hbnb
-ExecStart = sudo gunicorn -w 3 --bind 0.0.0.0:5003 web_dynamic.2-hbnb:app --access-logfile /tmp/airbnb-access.log --error-logfile /tmp/airbnb-error.log --pid /run/hbnb/hbnb.pid
-ExecReload = /bin/kill -s HUP $MAINPID
-ExecStop = /bin/kill -s TERM $MAINPID
-ExecStopPost = /bin/rm -rf /run/hbnb
-PrivateTmp = false
+exec { 'set-holberton-soft-nofile':
+  command => 'sed -i '/^holberton soft nofile/s/[[:digit:]]\\+/50000/' /etc/security/limits.conf',
+  path    => '/usr/local/bin/:/bin/',
+}
 
-[Install]
-WantedBy = multi-user.target
+exec { 'set-holberton-hard-nofile':
+  command => 'sed -i '/^holberton hard nofile/s/[[:digit:]]\\+/50000/' /etc/security/limits.conf',
+  path    => '/usr/local/bin/:/bin/',
+}
